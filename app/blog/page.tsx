@@ -101,7 +101,13 @@ export default function BlogPage() {
         {summary && urduSummary && (
           <>
             <h2 className="text-2xl font-semibold mt-6 mb-2 text-white">{title}</h2>
-            <SummaryDisplay summary={summary} urduSummary={urduSummary} />
+           <SummaryDisplay 
+  summary={summary} 
+  urduSummary={urduSummary} 
+  title={title || ''}   // ✅ same effect
+/>
+
+
             <Button onClick={handleReset} className="mt-4">Clear Summary</Button>
           </>
         )}

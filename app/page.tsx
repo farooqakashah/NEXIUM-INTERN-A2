@@ -34,7 +34,7 @@ export default function HomePage() {
                 Welcome to Blog Summariser
               </h1>
               <p className="text-lg text-gray-300">
-                This app allows you to paste any blog URL and receive a clean, concise summary of its content — in both English and Urdu. Whether you're short on time or want to understand the essence quickly, we've got you covered.
+                This app allows you to paste any blog URL and receive a clean, concise summary of its content — in both English and Urdu. Whether you&apos;re short on time or want to understand the essence quickly, we&apos;ve got you covered.
               </p>
             </div>
           </div>

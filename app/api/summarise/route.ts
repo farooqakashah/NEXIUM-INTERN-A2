@@ -31,12 +31,19 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ title, summary, urduSummary }, { status: 200 });
   } catch (error) {
-    console.error('Error in /api/summarise:', error);
-    return NextResponse.json(
-      { error: error.message || 'Failed to process the request' },
-      { status: 500 }
-    );
-  }
+  console.error('Error in /api/summarise:', error);
+
+  const message =
+    error instanceof Error
+      ? error.message
+      : 'Failed to process the request';
+
+  return NextResponse.json(
+    { error: message },
+    { status: 500 }
+  );
+}
+
 }
 
 export async function GET() {

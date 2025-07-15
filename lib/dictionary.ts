@@ -1,5 +1,8 @@
-const urduDictionary = {
-  // Single words
+// ------------------
+// ✅ Urdu Dictionary
+// ------------------
+
+export const urduDictionary: Record<string, string> = {
   the: 'دی',
   is: 'ہے',
   and: 'اور',
@@ -157,7 +160,6 @@ const urduDictionary = {
   can: 'سکتے ہیں',
   tell: 'بتانا',
   since: 'سے',
-  time: 'وقت',
   abraham: 'ابراہیم',
   has: 'ہے',
   always: 'ہمیشہ',
@@ -193,6 +195,7 @@ const urduDictionary = {
   justified: 'جائز',
   what: 'کیا',
   alleged: 'مبینہ',
+
   // Common phrases
   'in the': 'میں دی',
   'of the': 'کا دی',
@@ -214,60 +217,64 @@ const urduDictionary = {
   'historic connection': 'تاریخی تعلق',
 };
 
-// Context-aware rules for grammar and structure
-const contextRules = [
+// ----------------------
+// ✅ Context-aware rules
+// ----------------------
+
+export const contextRules = [
   {
-    // Handle "is" after a noun (e.g., "book is" -> "کتاب ہے")
     pattern: /(\w+)\s+is\b/gi,
     replacement: '$1 ہے',
   },
   {
-    // Handle "are" after plural nouns (e.g., "books are" -> "کتابیں ہیں")
     pattern: /(\w+)s\s+are\b/gi,
     replacement: '$1یں ہیں',
   },
   {
-    // Handle "was" after a noun (e.g., "man was" -> "آدمی تھا")
     pattern: /(\w+)\s+was\b/gi,
     replacement: '$1 تھا',
   },
   {
-    // Handle "were" after plural nouns (e.g., "people were" -> "لوگ تھے")
     pattern: /(\w+)s\s+were\b/gi,
     replacement: '$1 تھے',
   },
   {
-    // Handle "does not" (e.g., "does not indicate" -> "اشارہ نہیں کرتا")
     pattern: /does\s+not\b/gi,
     replacement: 'نہیں کرتا',
   },
 ];
 
-// Normalize Urdu text (fix spacing, ensure RTL compatibility)
-function normalizeUrduText(text) {
+// -------------------------
+// ✅ Normalize helper
+// -------------------------
+
+export function normalizeUrduText(text: string): string {
   return text
     .replace(/\s+/g, ' ')
-    .replace(/\s+([۔!?])/g, '$1') // Fix spacing before Urdu punctuation
+    .replace(/\s+([۔!?])/g, '$1')
     .trim();
 }
 
-export function translateToUrdu(text) {
+// -------------------------
+// ✅ Translator
+// -------------------------
+
+export function translateToUrdu(text: string): string {
   if (!text || typeof text !== 'string') {
     return '';
   }
 
   let translated = text;
 
-  // Apply phrase replacements first (longest to shortest to avoid partial matches)
   const sortedPhrases = Object.keys(urduDictionary)
-    .filter(key => key.includes(' '))
+    .filter((key) => key.includes(' '))
     .sort((a, b) => b.length - a.length);
+
   for (const phrase of sortedPhrases) {
     const regex = new RegExp(`\\b${phrase}\\b`, 'gi');
     translated = translated.replace(regex, urduDictionary[phrase]);
   }
 
-  // Apply single-word replacements
   for (const [english, urdu] of Object.entries(urduDictionary).filter(
     ([key]) => !key.includes(' ')
   )) {
@@ -275,11 +282,9 @@ export function translateToUrdu(text) {
     translated = translated.replace(regex, urdu);
   }
 
-  // Apply context-aware rules
   for (const rule of contextRules) {
     translated = translated.replace(rule.pattern, rule.replacement);
   }
 
-  // Normalize and return
   return normalizeUrduText(translated);
 }
