@@ -1,14 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { DotPattern } from "@/components/magicui/dot-pattern";
-import { FlickeringGrid } from "@/components/magicui/flickering-grid"; // 🧩 Import
+
 
 import Navbar from "@/components/Navbar";
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import BlogForm from '@/components/BlogForm';
 import SummaryDisplay from '@/components/SummaryDisplay';
 import { Button } from '@/components/ui/button';
+
+// ✅ ShadCN Card
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from '@/components/ui/card';
 
 interface ApiResponse {
   title: string;
@@ -76,41 +83,56 @@ export default function BlogPage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden">
-      {/* 🔮 Background grid effect */}
-      <FlickeringGrid className="absolute inset-0 z-0 bg-black" />
-      
-      {/* 🔲 Top bar pattern with navbar */}
-      <div className="relative z-10 bg-black h-20 overflow-hidden">
-        <DotPattern glow className="z-0" />
+    <main
+      className="relative min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('https://wallpaperaccess.com/full/788673.jpg')",
+      }}
+    >
+      {/* ✅ Subtle dark overlay for better contrast */}
+      <div className="absolute inset-0 bg-black/50" />
+
+      {/* ✅ Top bar with DotPattern + Navbar */}
+      <div className="relative z-10 bg-black/70 h-15 overflow-hidden border-b border-white/10">
         <Navbar />
       </div>
 
-      {/* 💡 Main content area */}
-      <div className="relative z-10 container mx-auto p-4">
-        <h1 className="text-3xl font-bold mt-8 mb-6 text-white">Summarise a Blog</h1>
+      {/* ✅ Main Card */}
+      <div className="relative z-10 container mx-auto p-4 flex justify-center">
+        <Card className="w-full max-w-3xl bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-2xl shadow-2xl">
+          <CardHeader className="text-center mb-4">
+            <CardTitle className="text-3xl font-bold text-white drop-shadow-md">
+              Summarise a Blog
+            </CardTitle>
+          </CardHeader>
 
-        <BlogForm onSubmit={handleSubmit} loading={loading} />
+          <CardContent>
+            <BlogForm onSubmit={handleSubmit} loading={loading} />
 
-        {error && (
-          <Alert variant="destructive" className="mt-4">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+            {error && (
+              <Alert variant="destructive" className="mt-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-        {summary && urduSummary && (
-          <>
-            <h2 className="text-2xl font-semibold mt-6 mb-2 text-white">{title}</h2>
-           <SummaryDisplay 
-  summary={summary} 
-  urduSummary={urduSummary} 
-  title={title || ''}   // ✅ same effect
-/>
-
-
-            <Button onClick={handleReset} className="mt-4">Clear Summary</Button>
-          </>
-        )}
+            {summary && urduSummary && (
+              <div className="mt-6">
+                <h2 className="text-2xl font-semibold mb-2 text-white drop-shadow-md">
+                  {title}
+                </h2>
+                <SummaryDisplay
+                  summary={summary}
+                  urduSummary={urduSummary}
+                  title={title || ''}
+                />
+                <Button onClick={handleReset} className="mt-4">
+                  Clear Summary
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </main>
   );

@@ -1,44 +1,68 @@
 'use client';
 
-import { DotPattern } from "@/components/magicui/dot-pattern";
+import Link from "next/link";
+
 import { Particles } from "@/components/magicui/particles";
-import Navbar from "@/components/Navbar"; // Shared Navbar
+import Navbar from "@/components/Navbar";
+
+// ✅ ShadCN UI Components
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   return (
     <div
-      className="min-h-screen bg-cover bg-center"
+      className="relative min-h-screen bg-cover bg-center"
       style={{
         backgroundImage:
-          "url('https://i.pinimg.com/736x/af/8d/63/af8d63a477078732b79ff9d9fc60873f.jpg')",
+          "url('https://wallpaperaccess.com/full/788673.jpg')",
       }}
     >
-      <main className="container mx-auto p-4 backdrop-blur-sm bg-black/40 min-h-screen">
-        {/* Navbar with background pattern */}
-        <div className="relative bg-black h-20 overflow-hidden">
-          <DotPattern glow className="z-0" />
+      {/* Subtle dark overlay to boost contrast but keep image visible */}
+      <div className="absolute inset-0 bg-black/30" />
+
+      {/* Optional gradient fade at bottom */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+      {/* Navbar */}
+      <header className="relative z-10">
+        <div className="relative h-16 overflow-hidden border-b border-white/10">
           <Navbar />
         </div>
+      </header>
 
-        {/* Particle Card Section */}
-        <section className="mt-16 flex justify-center items-center">
-          <div className="relative w-full max-w-xl p-6 rounded-xl overflow-hidden shadow-lg border border-white/10 bg-white/5">
-            {/* Particles Background */}
-            <div className="absolute inset-0 z-0">
-              <Particles className="h-full w-full opacity-40" />
-            </div>
-
-            {/* Card Content */}
-            <div className="relative z-10 text-center text-white">
-              <h1 className="text-4xl font-bold mb-4">
-                Welcome to Blog Summariser
-              </h1>
-              <p className="text-lg text-gray-300">
-                This app allows you to paste any blog URL and receive a clean, concise summary of its content — in both English and Urdu. Whether you&apos;re short on time or want to understand the essence quickly, we&apos;ve got you covered.
-              </p>
-            </div>
+      {/* Hero Section */}
+      <main className="relative z-10 flex items-center justify-center min-h-[80vh] px-4">
+        <Card className="relative w-full max-w-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-2xl overflow-hidden">
+          {/* Particles layered behind content */}
+          <div className="absolute inset-0">
+            <Particles className="h-full w-full opacity-20" />
           </div>
-        </section>
+
+          <CardHeader className="relative z-10 text-center text-white space-y-4">
+            <CardTitle className="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-md">
+              Welcome to Blog Summariser
+            </CardTitle>
+            <CardDescription className="text-lg md:text-xl text-gray-300 drop-shadow-sm">
+              Paste any blog URL and get a clean, concise summary — in English and Urdu.
+              Perfect when you’re short on time or just want the essence fast.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="relative z-10 flex justify-center">
+            <Link href="/blog">
+              <Button variant="secondary" className="mt-4">
+                Get Started
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

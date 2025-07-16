@@ -9,23 +9,33 @@ interface SummaryDisplayProps {
 export default function SummaryDisplay({ title, summary, urduSummary }: SummaryDisplayProps) {
   return (
     <div className="space-y-4">
-      <Card>
+      {/* Title card */}
+      <Card className="bg-white/5 backdrop-blur-md border border-white/10 shadow-md">
         <CardHeader>
-          <CardTitle>{title || 'Untitled Blog'}</CardTitle>
+          <CardTitle className="text-white">{title || 'Untitled Blog'}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <h3 className="text-lg font-medium mb-2">English Summary</h3>
-          <p>{summary}</p>
-        </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Urdu Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p dir="rtl" lang="ur">{urduSummary}</p>
-        </CardContent>
-      </Card>
+
+      {/* Side-by-side summaries */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <Card className="flex-1 bg-white/5 backdrop-blur-md border border-white/10 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-white">English Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-200">{summary}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="flex-1 bg-white/5 backdrop-blur-md border border-white/10 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-white">Urdu Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p dir="rtl" lang="ur" className="text-gray-200">{urduSummary}</p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

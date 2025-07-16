@@ -1,4 +1,3 @@
-// app/api/summarise/route.ts
 import { NextResponse } from 'next/server';
 import { scrapeBlog } from '@/lib/scraper';
 import { generateSummary } from '@/lib/summariser';
@@ -8,61 +7,50 @@ import { saveBlogText } from '@/lib/mongodb';
 
 export async function POST(request: Request) {
   try {
-    const { url } = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
 
-    // Validate the URL
+    const { url } = body;
+
     if (!url || typeof url !== 'string') {
-      return NextResponse.json(
-        { error: 'Valid URL is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Valid URL is required' }, { status: 400 });
     }
 
-    if (typeof url !== 'string' || !url.startsWith('http')) {
-      return NextResponse.json(
-        { error: 'URL must be a valid HTTP/HTTPS link' },
-        { status: 400 }
-      );
-    }
-
-    // Scrape the blog content and title
     const { title, content } = await scrapeBlog(url);
-
-    // Generate the summary (await in case it's async)
-    const summary = await generateSummary(content);
-
-    // Translate the summary to Urdu
+    const summary = generateSummary(content);
     const urduSummary = translateToUrdu(summary);
 
-    // Save to Supabase and MongoDB in parallel
     await Promise.all([
-      saveSummary(url, summary, urduSummary),
+      saveSummary(url, summary, urduSummary, title),
       saveBlogText(url, content),
     ]);
 
-    return NextResponse.json(
-      { title, summary, urduSummary },
-      { status: 200 }
-    );
-
+    return NextResponse.json({ title, summary, urduSummary }, { status: 200 });
   } catch (error) {
-    console.error('Error in /api/summarise:', error);
-
-    const message =
-      error instanceof Error
-        ? error.message
-        : 'Failed to process the request';
-
+  if (error instanceof Error) {
+    console.error('Error in /api/summarise:', {
+      message: error.message,
+      stack: error.stack,
+    });
     return NextResponse.json(
-      { error: message },
+      { error: error.message || 'Failed to process the request' },
+      { status: 500 }
+    );
+  } else {
+    console.error('Unknown error in /api/summarise:', error);
+    return NextResponse.json(
+      { error: 'Failed to process the request' },
       { status: 500 }
     );
   }
 }
 
+}
+
 export async function GET() {
-  return NextResponse.json(
-    { message: 'API route /api/summarise is active' },
-    { status: 200 }
-  );
+  return NextResponse.json({ message: 'API route /api/summarise is active' }, { status: 200 });
 }

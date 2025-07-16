@@ -1,29 +1,32 @@
 'use client';
 
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
+import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <NavigationMenu className="relative z-10 w-full bg-white/90 backdrop-blur border-b px-6 py-4 shadow-sm">
-      <div className="flex items-center justify-between container mx-auto">
-        <span className="text-xl font-bold tracking-tight text-primary">Blog Summariser</span>
-        <NavigationMenuList className="flex gap-6">
-          <NavigationMenuItem>
-            <NavigationMenuLink href="/" className="hover:text-blue-600 transition-colors">Home</NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink href="/blog" className="hover:text-blue-600 transition-colors">Summariser</NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink href="https://github.com" target="_blank" className="hover:text-blue-600 transition-colors">GitHub</NavigationMenuLink>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </div>
-    </NavigationMenu>
+    <header className="w-full bg-transparent backdrop-blur-sm border-b border-white/10">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="text-white text-2xl font-extrabold tracking-tight hover:text-gray-200 transition-colors">
+          Blog Summariser
+        </Link>
+
+        {/* Nav Links */}
+        <div className="flex items-center space-x-8">
+          <Link
+            href="/"
+            className="text-gray-300 hover:text-white font-medium transition-colors duration-200"
+          >
+            Home
+          </Link>
+          <Link
+            href="/about"
+            className="text-gray-300 hover:text-white font-medium transition-colors duration-200"
+          >
+            About
+          </Link>
+        </div>
+      </nav>
+    </header>
   );
 }
