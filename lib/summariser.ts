@@ -1,14 +1,11 @@
-export function generateSummary(text: string) {
-  // ✅ 1️⃣ Validate input up front
+export function generateSummary(text: string): string {
   if (typeof text !== 'string' || text.trim().length < 20) {
     return 'Summary could not be generated — invalid or too short text.';
   }
 
-  // Split text into sentences
   const sentences = text.match(/[^\.!\?]+[\.!\?]+/g)?.map(s => s.trim()) || [];
   if (sentences.length === 0) return 'Summary could not be generated.';
 
-  // Preprocess: remove punctuation, lowercase, include Urdu range
   const preprocess = (input: string) =>
     input
       .toLowerCase()
@@ -16,7 +13,6 @@ export function generateSummary(text: string) {
       .split(/\s+/)
       .filter(word => word.length > 0);
 
-  // Term Frequency
   const calculateTF = (input: string) => {
     const words = preprocess(input);
     const wordCount: Record<string, number> = {};
@@ -29,7 +25,6 @@ export function generateSummary(text: string) {
     );
   };
 
-  // Inverse Document Frequency
   const calculateIDF = (allSentences: string[]) => {
     const wordDocCount: Record<string, number> = {};
     const totalSentences = allSentences.length || 1;
@@ -47,7 +42,6 @@ export function generateSummary(text: string) {
     );
   };
 
-  // TF-IDF vector
   const getTFIDFVector = (tf: Record<string, number>, idf: Record<string, number>) => {
     const vector: Record<string, number> = {};
     Object.keys(tf).forEach(word => {
@@ -58,7 +52,6 @@ export function generateSummary(text: string) {
     return vector;
   };
 
-  // Cosine similarity
   const cosineSimilarity = (
     vectorA: Record<string, number>,
     vectorB: Record<string, number>
@@ -81,7 +74,6 @@ export function generateSummary(text: string) {
     return normA * normB === 0 ? 0 : dotProduct / (normA * normB);
   };
 
-  // TF-IDF
   const tfScores = sentences.map(sentence => calculateTF(sentence));
   const idfScores = calculateIDF(sentences);
   const sentenceVectors = tfScores.map(tf => getTFIDFVector(tf, idfScores));
@@ -95,10 +87,8 @@ export function generateSummary(text: string) {
     index,
   }));
 
-  // Filter low scores
   const filteredScores = sentenceScores.filter(item => item.score > 0.1);
 
-  // Pick top N with diversity
   const numSentences = Math.min(10, Math.max(6, Math.floor(sentences.length * 0.25)));
   const selectedSentences: { sentence: string; index: number }[] = [];
   const usedVectors: Record<string, number>[] = [];
