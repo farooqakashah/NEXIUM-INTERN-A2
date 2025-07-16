@@ -1,18 +1,16 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as cheerio from 'cheerio';
 import { setTimeout } from 'timers/promises';
 
-export async function scrapeBlog(url: string) {
-  // ✅ 1️⃣ Validate input up front
+export async function scrapeBlog(url: string): Promise<{ title: string; content: string }> {
   if (typeof url !== 'string' || !url.startsWith('http')) {
     throw new Error(`Invalid URL provided to scrapeBlog: ${url}`);
   }
 
   try {
-    // Retry logic for handling transient failures
     const maxRetries = 3;
     let attempt = 0;
-    let response;
+    let response: AxiosResponse;
 
     while (attempt < maxRetries) {
       try {
@@ -26,19 +24,18 @@ export async function scrapeBlog(url: string) {
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
           },
-          timeout: 15000, // 15 seconds
+          timeout: 15000,
         });
-        break; // Success!
+        break;
       } catch (err) {
         attempt++;
         if (attempt === maxRetries) throw err;
-        await setTimeout(1000 * attempt); // Backoff
+        await setTimeout(1000 * attempt);
       }
     }
 
     const $ = cheerio.load(response.data);
 
-    // Extract title
     let title = $('title').text().trim();
     if (!title || title.length < 3) {
       title = $('h1').first().text().trim();
@@ -50,7 +47,6 @@ export async function scrapeBlog(url: string) {
       title = 'Untitled Blog';
     }
 
-    // Remove unwanted sections
     $('nav, footer, aside, .sidebar, .advertisement, .ad, .comments, .comment-section, script, style, noscript').remove();
 
     const selectors = [
