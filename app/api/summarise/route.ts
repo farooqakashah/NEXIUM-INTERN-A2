@@ -1,4 +1,3 @@
-// app/api/summarise/route.ts
 import { NextResponse } from 'next/server';
 import { scrapeBlog } from '@/lib/scraper';
 import { generateSummary } from '@/lib/summariser';
@@ -8,41 +7,38 @@ import { saveBlogText } from '@/lib/mongodb';
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    console.log('[DEBUG] Body:', body);
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
 
-    const url = body?.url?.trim?.() || '';
+    const { url } = body;
 
-    if (typeof url !== 'string' || url.length === 0) {
-      console.error('[DEBUG] URL is invalid:', url);
+    if (!url || typeof url !== 'string') {
       return NextResponse.json({ error: 'Valid URL is required' }, { status: 400 });
     }
 
-    if (!url.startsWith('http')) {
-      console.error('[DEBUG] URL does not start with http/https:', url);
-      return NextResponse.json({ error: 'URL must start with http/https' }, { status: 400 });
-    }
-
-    console.log('[DEBUG] Scraping blog for URL:', url);
     const { title, content } = await scrapeBlog(url);
-
-    console.log('[DEBUG] Generating summary...');
-    const summary = generateSummary(content || '');
-
-    console.log('[DEBUG] Translating to Urdu...');
+    const summary = generateSummary(content);
     const urduSummary = translateToUrdu(summary);
 
-    console.log('[DEBUG] Saving...');
     await Promise.all([
-      saveSummary(url, summary, urduSummary),
+      saveSummary(url, summary, urduSummary, title),
       saveBlogText(url, content),
     ]);
 
-    console.log('[DEBUG] Done!');
     return NextResponse.json({ title, summary, urduSummary }, { status: 200 });
   } catch (error) {
-    console.error('[ERROR] /api/summarise failed:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Error in /api/summarise:', {
+      message: error.message,
+      stack: error.stack,
+    });
+    return NextResponse.json(
+      { error: error.message || 'Failed to process the request' },
+      { status: 500 }
+    );
   }
 }
 
