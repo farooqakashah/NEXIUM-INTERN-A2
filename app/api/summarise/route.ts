@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     ]);
 
     return NextResponse.json({ title, summary, urduSummary }, { status: 200 });
-  } } catch (error) {
+  } catch (error) {
   if (error instanceof Error) {
     console.error('Error in /api/summarise:', {
       message: error.message,
