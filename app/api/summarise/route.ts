@@ -30,7 +30,8 @@ export async function POST(request: Request) {
     ]);
 
     return NextResponse.json({ title, summary, urduSummary }, { status: 200 });
-  } catch (error) {
+  } } catch (error) {
+  if (error instanceof Error) {
     console.error('Error in /api/summarise:', {
       message: error.message,
       stack: error.stack,
@@ -39,7 +40,15 @@ export async function POST(request: Request) {
       { error: error.message || 'Failed to process the request' },
       { status: 500 }
     );
+  } else {
+    console.error('Unknown error in /api/summarise:', error);
+    return NextResponse.json(
+      { error: 'Failed to process the request' },
+      { status: 500 }
+    );
   }
+}
+
 }
 
 export async function GET() {
