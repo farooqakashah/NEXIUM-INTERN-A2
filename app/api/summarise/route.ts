@@ -30,27 +30,30 @@ export async function POST(request: Request) {
     ]);
 
     return NextResponse.json({ title, summary, urduSummary }, { status: 200 });
+
   } catch (error) {
-  if (error instanceof Error) {
-    console.error('Error in /api/summarise:', {
-      message: error.message,
-      stack: error.stack,
-    });
-    return NextResponse.json(
-      { error: error.message || 'Failed to process the request' },
-      { status: 500 }
-    );
-  } else {
-    console.error('Unknown error in /api/summarise:', error);
-    return NextResponse.json(
-      { error: 'Failed to process the request' },
-      { status: 500 }
-    );
+    if (error instanceof Error) {
+      console.error('Error in /api/summarise:', {
+        message: error.message,
+        stack: error.stack,
+      });
+      return NextResponse.json(
+        { error: error.message || 'Failed to process the request' },
+        { status: 500 }
+      );
+    } else {
+      console.error('Unknown error in /api/summarise:', error);
+      return NextResponse.json(
+        { error: 'Failed to process the request' },
+        { status: 500 }
+      );
+    }
   }
 }
 
-}
-
 export async function GET() {
-  return NextResponse.json({ message: 'API route /api/summarise is active' }, { status: 200 });
+  return NextResponse.json(
+    { message: 'API route /api/summarise is active' },
+    { status: 200 }
+  );
 }
